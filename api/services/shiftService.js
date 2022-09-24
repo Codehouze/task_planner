@@ -1,11 +1,57 @@
-const user = require("../model/shiftModel");
+const Shift = require("../model/shiftModel");
 
 class ShiftService {
-  async createShift(req) {}
+  async createWorkerShift(req) {
+    const { name, startHour, endHour } = req.body;
 
-  async getAllShift(req) {}
-  async getOneShift(req) {}
-  async deleteShift(req) {}
-  async updateShift(req) {}
+    const getOneShift = await Shift.findOne({ name });
+ 
+    if (getOneShift) {
+      return { success: false, message: "Shift already exist" };
+    }
+    //TODO: check shift duration A shift is 8 hours long
+    const shiftDuration = endHour - startHour;
+    if (shiftDuration !== 8) {
+      return { success: false, message: "A shift must be 8 hours long " };
+    }
+
+    const formData = new Shift({
+      name,
+      startHour,
+      endHour,
+    });
+    await formData.save();
+    return {
+      success: true,
+      message: `Shift Created successfully`,
+      data: formData,
+    };
+  }
+  async getAllShift() {
+    const shift = await Shift.find();
+    if (!shift) {
+      return { success: false, message: "Shift Not found" };
+    }
+
+    return {
+      success: true,
+      message: "shift returned successfully",
+      data: shift,
+    };
+  }
+
+  async getOneShift(req) {
+    const { id } = req.param;
+    const shift = await Shift.findOne({ id });
+    if (!shift) {
+      return { success: false, message: "Shift Not found" };
+    }
+
+    return {
+      success: true,
+      message: "shift returned successfully",
+      data: shift,
+    };
+  }
 }
 module.exports = ShiftService;

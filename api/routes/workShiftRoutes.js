@@ -1,17 +1,17 @@
-const shiftCtrl = require("../controller/shiftCtrl");
+const workerShiftCtrl = require("../controller/workerShiftCtrl");
 const validator = require("../middleware/validate");
 const { validateRequest } = require("../middleware/request-validator");
 
 const router = require("express").Router();
 
 router.post(
-  "/",
+  "/:id",
   // validator.signUpValidator,
   // validateRequest,
-  shiftCtrl.createShift
+  workerShiftCtrl.createWorkShift
 );
 
-router.get("/:id", shiftCtrl.getOneShift);
-router.get("/", shiftCtrl.getAllShift);
+router.get("/", workerShiftCtrl.getAllWorkShift);
+router.get("/:id", workerShiftCtrl.getOneWorkShift);
 
 module.exports = router;

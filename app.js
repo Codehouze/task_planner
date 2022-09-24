@@ -2,16 +2,18 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./api/config/db");
 const app = express();
+const bodyParser = require("body-parser");
 
 dotenv.config();
 
-//connect db 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+//connect db
 connectDB();
-app.use("/api/v1/auth/user", require("./api/routes/userRoutes"));
+app.use("/api/v1/shift", require("./api/routes/shiftRoutes"));
+app.use("/api/v1/auth/worker", require("./api/routes/workerRoutes"));
+app.use("/api/v1/worker_shift", require("./api/routes/workShiftRoutes"));
 
+const port = process.env.PORT;
 
-
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(console.log(`we are live on ${PORT}`));
+app.listen(port, () => console.log(`Running on http://localhost:${port}`));
