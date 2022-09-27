@@ -1,7 +1,7 @@
 //Require Mongoose
 const mongoose = require("mongoose");
 
-//Define a schema
+
 const WorkerModelSchema = new mongoose.Schema({
   name: {
     type: String,

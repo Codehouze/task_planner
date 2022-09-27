@@ -5,11 +5,11 @@ class ShiftService {
     const { name, startHour, endHour } = req.body;
 
     const getOneShift = await Shift.findOne({ name });
- 
+
     if (getOneShift) {
       return { success: false, message: "Shift already exist" };
     }
-    //TODO: check shift duration A shift is 8 hours long
+
     const shiftDuration = endHour - startHour;
     if (shiftDuration !== 8) {
       return { success: false, message: "A shift must be 8 hours long " };

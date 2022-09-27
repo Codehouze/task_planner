@@ -1,20 +1,18 @@
 //Require Mongoose
 const mongoose = require("mongoose");
 
-//Define a schema
 const WorkerShiftModelSchema = new mongoose.Schema({
+  startTime: Date,
+  endTime: Date,
   workerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'workerModel',
-  }, //object,
+    ref: "workerModel",
+  },
 
   shiftId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'shiftModel',
-  }, // object
-
-  startTime: Date,
-  endTime: Date,
+    ref: "shiftModel",
+  },
 });
 
 const WorkerShiftModel = mongoose.model(
