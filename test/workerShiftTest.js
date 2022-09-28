@@ -1,8 +1,7 @@
 const expect = require("chai").expect;
 const request = require("supertest");
 const app = require("../app");
-const { MongoMemoryServer } = require("mongodb-memory-server");
-const mongoose = require("mongoose");
+
 require("dotenv").config();
 
 const mockWorkShift = {
@@ -49,7 +48,7 @@ describe("A worker never has two shifts on the same day ", () => {
       .post("/api/v1/worker_shift/633279d2907d62960301be50")
       .send(mockWorkShift);
     expect(res._body.message).to.equal("Worker has a shift already");
-    // expect(res.status).to.equal(400);
+    expect(res.status).to.equal(400);
   });
 });
 describe("Shift Should be with in a day", () => {

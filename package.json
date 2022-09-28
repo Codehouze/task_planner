@@ -32,8 +32,5 @@
     "nodemon": "^2.0.19",
     "request": "^2.88.2",
     "supertest": "^6.2.4"
-  },
-  "devDependencies": {
-    "mongodb-memory-server-global": "^8.9.3"
   }
 }
