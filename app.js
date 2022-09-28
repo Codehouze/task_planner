@@ -9,7 +9,16 @@ dotenv.config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 //connect db
-connectDB();
+if (
+  process.env.NODE_ENV === "development" ||
+  process.env.NODE_ENV === "production"
+) {
+  connectDB();
+
+  // Mock data seeding
+  seedData();
+}
+
 app.get("/", function (req, res) {
   res.send("Hello World");
 });

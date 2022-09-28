@@ -6,83 +6,50 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const mockUser = {
-  firstName: "Emmanuel",
-  lastName: "Maxwell",
+  _id: "632efdc3c585195f481d2936",
+  name: "Emmanuel",
   email: "maxwe111@gmail.com",
-  password: "Maxwell",
+  password: "Maxwell12345",
+  gender: "Male",
 };
 
 const mockUser2 = {
-  firstName: "Emmanuel",
-  lastName: "Maxwell",
-  email: "maxwe111@gmail.com",
-  password: "Maxwell",
+  _id: "632efe0ec585195f481d293a",
+  name: "Emmanuel",
+  email: "maxwe122@gmail.com",
+  password: "Maxwell3214",
+  gender: "Male",
 };
 const mockUser3 = {
-  firstName: "Emmanmaxwell",
-  lastName: "Maxwellemmma",
-  email: "maxwe111@gmail.com",
-  password: "Maxw",
+  _id: "632f0162562bd67546312393",
+  name: "EmmaMaxwell",
+  email: "maxwe122@gmail.com",
+  password: "Maxwell",
+  gender: "Male",
 };
-describe("User Authentication", () => {
-  before("Setting up db", async () => {
-    const mongo = await MongoMemoryServer.create();
-    const uri = mongo.getUri();
-
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-  });
-
-  it("User Should Signup Successfully", async () => {
-    const res = await request(app).post("/api/users/").send(mockUser);
-    expect(res.body.message).to.equal("User Created successfully");
-  });
-
-  it("User Should have a unique email to Signup Successfully", async () => {
-    const res = await request(app).post("/api/users/").send(mockUser2);
-    expect(res.body.message).to.equal("Account already exist");
-    
-  });
-
-  it("User Should Not Signup If Password is Not Provided", async () => {
-    const res = await request(app).post("/api/users/").send(mockUser3);
-    expect(res.status).to.equal(422)
-    expect(res.body.errors[0].msg).to.equal("Password are required and must be longer than 6 characters");
-  
-  });
-
-  it("User Should login And Get A Token", async () => {
-    const res = await request(app)
-      .post("/api/users/login")
-      .send({ email: "maxwe111@gmail.com", password: "Maxwell" });
+describe("Worker Authentication", () => {
+  it("Worker Should Signup Successfully", async () => {
+    const res = await request(app).post("/api/v1/auth/worker/").send(mockUser);
+    // console.log(res);
+    expect(res.body.message).to.equal("Worker Created successfully");
     expect(res.status).to.equal(200);
-    expect(res.body.message).to.equal("login successfully");
-    expect(res.body.data).to.not.equal(null);
-  });
-});
-
-describe("Restrict Access to Getting List of Users to only Authorized Users", () => {
-  let token;
-
-  before("Login user", async () => {
-    const response = await request(app)
-      .post("/api/users/login")
-      .send({ email: "maxwe111@gmail.com", password: "Maxwell" });
-    token = response.body.data;
   });
 
-  it("Authorized Users Should Get List Of All Users", async () => {
-    const users = await request(app)
-      .get("/api/users")
-      .set("Authorization", token);
+  it("Worker Should Not Signup If Password is Not Provided", async () => {
+    const res = await request(app).post("/api/v1/auth/worker").send(mockUser3);
+    expect(res.error.status).to.equal(400);
+    expect(res._body.message).to.equal(
+      "Password should be greater than 8 characters"
+    );
   });
 
-
-  it("Unauthorized Users Should Not Get List Of All Users", async () => {
-    const users = await request(app)
-      .get("/api/users")
-    expect(users.body.message).to.equal("Forbidden Request")
-  });
+  // it("Worker Should login And Get A Token", async () => {
+  //   const res = await request(app)
+  //     .post("/api/v1/auth/worker/login")
+  //     .send({ email: "maxwe111@gmail.com", password: "Maxwell12345" });
+  //   console.log(res);
+  //   expect(res.status).to.equal(200);
+  //   expect(res.body.message).to.equal("login successfully");
+  //   expect(res.body.data).to.not.equal(null);
+  // });
 });

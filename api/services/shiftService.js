@@ -12,7 +12,7 @@ class ShiftService {
 
     const shiftDuration = endHour - startHour;
     if (shiftDuration !== 8) {
-      return { success: false, message: "A shift must be 8 hours long " };
+      return { success: false, message: "A shift must be 8 hours long" };
     }
 
     const formData = new Shift({

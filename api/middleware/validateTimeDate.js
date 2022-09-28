@@ -16,7 +16,7 @@ exports.validateTimeDate = (startTime, endTime) => {
     console.log({ message: "Date and Time must be in the future" });
     return {
       success: false,
-      message: "Date and Time must be a in the future",
+      message: "Date and Time must be in the future",
     };
   }
   return { success: true, data: { start, end } };

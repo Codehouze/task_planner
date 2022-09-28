@@ -8,9 +8,15 @@ class WorkerService {
   async createWorker(req) {
     const { name, email, gender, password } = req.body;
     const user = await Worker.findOne({ email });
-
+    console.log(user);
     if (user) {
       return { success: false, message: "Account already exist", data: {} };
+    }
+    if (password.length < 8) {
+      return {
+        success: false,
+        message: "Password should be greater than 8 characters",
+      };
     }
 
     const hashedPassword = await generateHashPassword(password);
