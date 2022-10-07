@@ -16,6 +16,7 @@ const validator = {
         "Password are required and must be longer than 6 characters"
       ),
   ],
+  
   validateEmail: [
     // Email must be specified
     check("email")
@@ -23,6 +24,7 @@ const validator = {
       .isEmail()
       .withMessage("Email is required"),
   ],
+
   signUpValidator: [
     check("name").isString().notEmpty().withMessage("name is Required"),
     check("gender").isString().notEmpty().withMessage("gender is Required"),

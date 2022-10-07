@@ -15,8 +15,7 @@ if (
 ) {
   connectDB();
 
-  // Mock data seeding
-  seedData();
+ 
 }
 
 app.get("/", function (req, res) {

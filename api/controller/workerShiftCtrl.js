@@ -4,7 +4,9 @@ const workerShiftService = new WorkerShiftService();
 
 exports.createWorkShift = async (req, res) => {
   try {
-    const { data, message, success } = await workerShiftService.assignShift(req);
+    const { data, message, success } = await workerShiftService.assignShift(
+      req
+    );
 
     if (!success) {
       return res.status(400).json({ success, message });
@@ -20,13 +22,14 @@ exports.createWorkShift = async (req, res) => {
 
 exports.getAllWorkShift = async (req, res) => {
   try {
-    const { data, message, success } = await workerShiftService.getAllWorkerShift(req);
+    const { data, message, success } =
+      await workerShiftService.getAllWorkerShift(req);
     if (!success) {
       return res.status(400).json({ success, message });
     }
     return res.status(200).json({ success, message, data });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res
       .status(500)
       .json({ success: false, message: "Something went wrong" });
@@ -35,7 +38,9 @@ exports.getAllWorkShift = async (req, res) => {
 
 exports.getOneWorkShift = async (req, res) => {
   try {
-    const { data, message, success } = await workerShiftService.getOneWorkShift(req);
+    const { data, message, success } = await workerShiftService.getOneWorkShift(
+      req
+    );
     if (!success) {
       return res.status(400).json({ success, message });
     }
@@ -46,5 +51,3 @@ exports.getOneWorkShift = async (req, res) => {
       .json({ success: false, message: "Something went wrong" });
   }
 };
-
-

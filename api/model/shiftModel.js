@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const ShiftModelSchema = new mongoose.Schema({
-  startHour: Number,
-  endHour: Number,
+  startHour: String,
+  endHour: String,
   name: String,
 });
 

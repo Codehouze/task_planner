@@ -10,7 +10,8 @@ class ShiftService {
       return { success: false, message: "Shift already exist" };
     }
 
-    const shiftDuration = endHour - startHour;
+    const shiftDuration = parseInt(endHour) - parseInt(startHour);
+
     if (shiftDuration !== 8) {
       return { success: false, message: "A shift must be 8 hours long" };
     }

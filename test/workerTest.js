@@ -12,13 +12,6 @@ const mockUser = {
 };
 
 const mockUser2 = {
-  _id: "632efe0ec585195f481d293a",
-  name: "Emmanuel",
-  email: "maxwe122@gmail.com",
-  password: "Maxwell3214",
-  gender: "Male",
-};
-const mockUser3 = {
   _id: "632f0162562bd67546312393",
   name: "EmmaMaxwell",
   email: "maxwe122@gmail.com",
@@ -33,7 +26,7 @@ describe("Worker Authentication", () => {
   });
 
   it("Worker Should Not Signup If Password is Not Provided", async () => {
-    const res = await request(app).post("/api/v1/auth/worker").send(mockUser3);
+    const res = await request(app).post("/api/v1/auth/worker").send(mockUser2);
     expect(res.error.status).to.equal(400);
     expect(res._body.message).to.equal(
       "Password should be greater than 8 characters"
