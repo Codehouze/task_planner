@@ -1,6 +1,9 @@
 const { sign } = require("jsonwebtoken");
 require("dotenv").config();
+const { SECRET_KEY } = process.env;
 
-module.exports.createToken = (payload, expires) => {
-  return sign(payload, process.env.SECRET_KEY, { expiresIn: expires });
+exports.createToken = (payload) => {
+  const token = sign(payload, SECRET_KEY, { expiresIn: "1h" });
+
+  return token;
 };

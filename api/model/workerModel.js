@@ -14,7 +14,7 @@ const WorkerModelSchema = new mongoose.Schema({
   },
   gender: String,
 
-  password: { type: String, select: false, min: 7 },
+  password: { type: String, min: 7 },
 });
 const WorkerModel = mongoose.model("WorkerModel", WorkerModelSchema);
 

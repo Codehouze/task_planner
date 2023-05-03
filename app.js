@@ -3,6 +3,9 @@ const dotenv = require("dotenv");
 const connectDB = require("./api/config/db");
 const app = express();
 const bodyParser = require("body-parser");
+const shiftRoutes = require("./api/routes/shiftRoutes");
+const workerRoutes = require("./api/routes/workerRoutes");
+const workerShiftRoutes = require("./api/routes/workShiftRoutes");
 
 dotenv.config();
 
@@ -14,17 +17,16 @@ if (
   process.env.NODE_ENV === "production"
 ) {
   connectDB();
-
- 
 }
 
 app.get("/", function (req, res) {
   res.send("Hello World");
 });
 
-app.use("/api/v1/shift", require("./api/routes/shiftRoutes"));
-app.use("/api/v1/auth/worker", require("./api/routes/workerRoutes"));
-app.use("/api/v1/worker_shift", require("./api/routes/workShiftRoutes"));
+// Register routes
+app.use("/api/v1/shift", shiftRoutes);
+app.use("/api/v1/auth/worker", workerRoutes);
+app.use("/api/v1/worker_shift", workerShiftRoutes);
 
 const port = process.env.PORT;
 

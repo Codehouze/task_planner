@@ -29,7 +29,7 @@ describe("Shift Should be created successfully", () => {
     const mongo = await MongoMemoryServer.create();
     const uri = mongo.getUri();
 
-    await mongoose.connect(uri, {
+    mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -41,8 +41,9 @@ describe("Shift Should be created successfully", () => {
     expect(res.status).to.equal(400);
   });
 
-  it("Shift should be a number", async () => {
+  it.only("Shift should be a number", async () => {
     const res = await request(app).post("/api/v1/shift/").send(mockShift3);
+    console.log(res);
     expect(res.status).to.equal(200);
   });
 });

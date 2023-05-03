@@ -32,6 +32,7 @@
     "mongoose": "^6.5.4",
     "nodemon": "^2.0.19",
     "request": "^2.88.2",
+    "sinon": "^14.0.1",
     "supertest": "^6.2.4"
   }
 }

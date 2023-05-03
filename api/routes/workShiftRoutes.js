@@ -5,7 +5,7 @@ const { validateRequest } = require("../middleware/requestValidator");
 const router = require("express").Router();
 
 router.post(
-  "/:id",
+  "/",
   // validator.signUpValidator,
   // validateRequest,
   workerShiftCtrl.createWorkShift

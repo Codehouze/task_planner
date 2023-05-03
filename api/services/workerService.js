@@ -1,26 +1,18 @@
 const Worker = require("../model/workerModel");
 const generateHashPassword = require("../utils/generateHashPassword");
 const { createToken } = require("../utils/createToken");
-const { compare } = require("bcrypt");
+const { compareSync } = require("bcrypt");
 
 require("dotenv").config();
 class WorkerService {
-  async createWorker(req) {
-    const { name, email, gender, password } = req.body;
+  async createWorker(data) {
+    const { name, email, gender, password } = data;
     const user = await Worker.findOne({ email });
-    console.log(user);
     if (user) {
-      return { success: false, message: "Account already exist", data: {} };
-    }
-    if (password.length < 8) {
-      return {
-        success: false,
-        message: "Password should be greater than 8 characters",
-      };
+      return { message: "Account already exist" };
     }
 
     const hashedPassword = await generateHashPassword(password);
-
     const newWorker = new Worker({
       name,
       email,
@@ -29,41 +21,33 @@ class WorkerService {
     });
     await newWorker.save();
     return {
-      success: true,
       message: `Worker Created successfully`,
-      data: newWorker,
     };
   }
-  async login(req) {
-    const { email, password } = req.body;
+  async login(data) {
+    const { email, password } = data;
+
     const worker = await Worker.findOne({ email });
 
     if (!worker) {
       return {
-        success: false,
         message: "Incorrect email or password",
-        data: {},
       };
     }
 
-    const match = compare(password, user.password);
-    if (!match) {
+    const isPasswordAMatch = compareSync(password, worker.password);
+    if (!isPasswordAMatch) {
       return {
-        success: false,
         message: "Incorrect email or password",
-        data: {},
       };
     }
 
-    const token = createToken({ id: user._id }, "2d");
+    const token = await createToken({ email, id: worker._id });
 
-    return { success: true, message: "login successfully", data: token };
+    return { message: "login successfully", token };
   }
-
-  async getOneWorker(req) {
-    const { id } = req.param;
+  async getOneWorker(id) {
     const worker = await Worker.findOne({ id });
-    console.log(worker);
     if (!worker) {
       return {
         success: false,
@@ -71,10 +55,9 @@ class WorkerService {
         data: {},
       };
     }
-
     return { success: true, message: "successful", data: worker };
   }
-  async getAllWorkers(req) {
+  async getAllWorkers() {
     const workers = await Worker.find({});
 
     if (!workers) {

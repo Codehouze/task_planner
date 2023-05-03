@@ -1,64 +1,109 @@
 const workerShift = require("../model/workerShiftModel");
 const moment = require("moment"); // require
 const Shift = require("../model/shiftModel");
-const { validateTime } = require("../middleware/validateTime");
+const {
+  validateTime,
+  validateShiftWithTimeTable,
+} = require("../middleware/validateTime");
 
 class WorkerShiftService {
-  async assignShift(req) {
-    const { id } = req.params;
-    const { shiftId, startTime, endTime } = req.body;
+  // async assignShift(req) {
 
-    const { error, data } = validateTime(startTime, endTime);
+  //   const { error, data } = validateTime(startTime, endTime);
 
-    if (error) {
+  //   if (error) {
+  //     return {
+  //       message: error,
+  //     };
+  //   }
+
+  //   data.startTime = moment(startTime).format("HH:mm");
+  //   data.endTime = moment(endTime).format("HH:mm");
+
+  //   const timeTable = await Shift.findOne({ _id: shiftId });
+  //   const { message } = validateShiftWithTimeTable(
+  //     timeTable.startHour,
+  //     timeTable.endHour,
+  //     startTime,
+  //     endTime
+  //   );
+  //   console.log(startTime, endTime);
+  //   if (message) {
+  //     return { message: error };
+  //   }
+  //   const workersShift = await workerShift.find({ workId: id });
+
+  //   if (workersShift) {
+  //     for (let i = 0; i < workersShift.length; i++) {
+  //       const hasExistingShift = moment(workersShift.endTime).isSame(
+  //         moment(endTime)
+  //       );
+  //       if (hasExistingShift) {
+  //         return {
+  //           success: false,
+  //           message: "Worker has a shift already",
+  //           data: {},
+  //         };
+  //       }
+  //     }
+  //   }
+  //   const assignShift = new workerShift({
+  //     workerId: id,
+  //     shiftId,
+  //     startTime,
+  //     endTime,
+  //   });
+
+  //   await assignShift.save();
+
+  //   return {
+  //     success: true,
+  //     message: "Shift assigned successful",
+  //     data: assignShift,
+  //   };
+  // }
+  async assignShift(data) {
+    const { startTime, endTime, shiftId, id } = data;
+
+    const isValidTime = validateTime(startTime, endTime);
+    if (!isValidTime) {
+      return isValidTime;
+    }
+
+    const timeTable = await Shift.findById(shiftId);
+    const validation = validateShiftWithTimeTable(
+      timeTable.startHour,
+      timeTable.endHour,
+      startTime,
+      endTime
+    );
+    if (validation.message) {
+      return { message: validation.message };
+    }
+
+    const workersShift = await workerShift.find({ workerId: id });
+    const hasExistingShift = workersShift.some((shift) =>
+      moment(shift.endTime).isSame(moment(endTime))
+    );
+
+    if (hasExistingShift) {
       return {
-        message: error,
+        message: "Worker has a shift already",
       };
     }
 
-    const { startDate, endDate } = data;
-    const start = moment(startDate).format("HH:mm");
-    const end = moment(endDate).format("HH:mm");
-
-    console.log(start, end);
-    const timeTable = await Shift.findOne({ _id: shiftId });
-    if (timeTable.startHour !== start && timeTable.endHour !== end) {
-      return {
-        success: false,
-        message:
-          "Select a Shift within the range of [00:00-08:00],[08:00-16:00],[16:00-24:00]",
-      };
-    }
-
-    const workersShift = await workerShift.findOne({ workId: id });
-
-    if (workersShift) {
-      // console.log(workersShift);
-      const hasExistingShift = moment(workersShift.endTime).isSame(
-        moment(endTime)
-      );
-
-      if (hasExistingShift == true) {
-        return {
-          success: false,
-          message: "Worker has a shift already",
-          data: {},
-        };
-      }
-    }
     const assignShift = new workerShift({
       workerId: id,
       shiftId,
-      startTime,
-      endTime,
+      startTime: moment(startTime).format("HH:mm"),
+      endTime: moment(endTime).format("HH:mm"),
     });
 
     await assignShift.save();
 
     return {
-      success: true,
-      message: "Shift assigned successful",
-      data: assignShift,
+      message: "Shift assigned successfully",
+      assignShift,
     };
   }
 

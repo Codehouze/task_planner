@@ -1,17 +1,15 @@
 const ShiftService = require("../services/shiftService");
+const { getOneWorkShift } = require("./workerShiftCtrl");
 
 const shiftService = new ShiftService();
 
 exports.createShift = async (req, res) => {
+  const { name, startHour, endHour } = req.body;
   try {
-    const { data, message, success } = await shiftService.createWorkerShift(
-      req
-    );
+    const data = { name, startHour, endHour };
+    const createdShift = await shiftService.createWorkShift(data);
 
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.json({ success, message, data });
+    return res.json(createdShift);
   } catch (err) {
     console.log(err);
     return res
@@ -21,12 +19,10 @@ exports.createShift = async (req, res) => {
 };
 
 exports.getOneShift = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { data, message, success } = await shiftService.getOneShift(req);
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.json({ success, data, message });
+    const getOneShift = await shiftService.getOneShift(id);
+    return res.json(getOneShift);
   } catch (err) {
     console.log(err);
     return res
@@ -37,11 +33,9 @@ exports.getOneShift = async (req, res) => {
 
 exports.getAllShift = async (req, res) => {
   try {
-    const { data, message, success } = await shiftService.getAllShift(req);
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.json({ success, data, message });
+    const getAllShift = await shiftService.getAllShift();
+
+    return res.json(getAllShift);
   } catch (err) {
     console.log(err);
     return res

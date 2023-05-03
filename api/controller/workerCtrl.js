@@ -3,15 +3,12 @@ const WorkerService = require("../services/workerService");
 const workerService = new WorkerService();
 
 exports.createWorker = async (req, res) => {
+  const { name, email, gender, password } = req.body;
+  const data = { name, email, gender, password };
   try {
-    const { data, message, success } = await workerService.createWorker(req);
-
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.json({ success, message, data });
+    const createdWorker = await workerService.createWorker(data);
+    return res.json(createdWorker);
   } catch (err) {
-    console.log(err);
     return res
       .status(500)
       .json({ success: false, message: "Something went wrong" });
@@ -19,43 +16,38 @@ exports.createWorker = async (req, res) => {
 };
 
 exports.workerLogin = async (req, res) => {
+  const {
+    body: { email, password },
+  } = req;
   try {
-    const { data, message, success } = await workerService.login(req);
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.status(200).json({ success, message, data });
+    const data = { email, password };
+    const loggedInWorker = await workerService.login(data);
+
+    return res.status(200).json(loggedInWorker);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ success: false, message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 exports.getOneWorker = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
   try {
-    const { data, message, success } = await workerService.getOneWorker(req);
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.json({ success, data, message });
+    const oneWorker = await workerService.getOneWorker(id);
+
+    return res.json(oneWorker);
   } catch (err) {
-    console.log(err)
-    return res
-      .status(500)
-      .json({ success: false, message: "Something went wrong" });
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 exports.getAllWorkers = async (req, res) => {
   try {
-    const { data, message, success } = await workerService.getAllWorkers(req);
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.json({ success, data, message });
+    const getAllWorkers = await workerService.getAllWorkers();
+
+    return res.json(getAllWorkers);
   } catch (err) {
-    console.log(err)
     return res
       .status(500)
       .json({ success: false, message: "Something went wrong" });

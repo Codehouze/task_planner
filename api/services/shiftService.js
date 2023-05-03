@@ -1,19 +1,18 @@
 const Shift = require("../model/shiftModel");
+const { validateShiftDuration } = require("../middleware/validateTime");
 
 class ShiftService {
-  async createWorkerShift(req) {
-    const { name, startHour, endHour } = req.body;
+  async createWorkShift(data) {
+    const { name, startHour, endHour } = data;
+    const shiftExist = this.getShift(name);
 
-    const getOneShift = await Shift.findOne({ name });
-
-    if (getOneShift) {
-      return { success: false, message: "Shift already exist" };
+    if (shiftExist) {
+      return shiftExist;
     }
 
-    const shiftDuration = parseInt(endHour) - parseInt(startHour);
-
-    if (shiftDuration !== 8) {
-      return { success: false, message: "A shift must be 8 hours long" };
+    const isNotValidShiftDuration = validateShiftDuration(startHour, endHour);
+    if (isNotValidShiftDuration) {
+      return isNotValidShiftDuration;
     }
 
     const formData = new Shift({
@@ -22,37 +21,37 @@ class ShiftService {
       endHour,
     });
     await formData.save();
+
     return {
       success: true,
-      message: `Shift Created successfully`,
+      message: `Shift ${name} created successfully.`,
       data: formData,
     };
   }
+
   async getAllShift() {
     const shift = await Shift.find();
     if (!shift) {
-      return { success: false, message: "Shift Not found" };
+      return { message: "Shift Not found" };
     }
 
-    return {
-      success: true,
-      message: "shift returned successfully",
-      data: shift,
-    };
+    return shift;
   }
 
-  async getOneShift(req) {
-    const { id } = req.param;
+  async getOneShift(id) {
     const shift = await Shift.findOne({ id });
     if (!shift) {
-      return { success: false, message: "Shift Not found" };
+      return { message: "Shift Not found" };
     }
+    return shift;
+  }
 
-    return {
-      success: true,
-      message: "shift returned successfully",
-      data: shift,
-    };
+  async getShift(name) {
+    const existingShift = await Shift.findOne({ name });
+
+    if (existingShift) {
+      return { message: "Shift already exist" };
+    }
   }
 }
 module.exports = ShiftService;
