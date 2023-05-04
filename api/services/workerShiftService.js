@@ -7,103 +7,52 @@ const {
 } = require("../middleware/validateTime");
 
 class WorkerShiftService {
-  // async assignShift(req) {
-
-  //   const { error, data } = validateTime(startTime, endTime);
-
-  //   if (error) {
-  //     return {
-  //       message: error,
-  //     };
-  //   }
-
-  //   data.startTime = moment(startTime).format("HH:mm");
-  //   data.endTime = moment(endTime).format("HH:mm");
-
-  //   const timeTable = await Shift.findOne({ _id: shiftId });
-  //   const { message } = validateShiftWithTimeTable(
-  //     timeTable.startHour,
-  //     timeTable.endHour,
-  //     startTime,
-  //     endTime
-  //   );
-  //   console.log(startTime, endTime);
-  //   if (message) {
-  //     return { message: error };
-  //   }
-  //   const workersShift = await workerShift.find({ workId: id });
-
-  //   if (workersShift) {
-  //     for (let i = 0; i < workersShift.length; i++) {
-  //       const hasExistingShift = moment(workersShift.endTime).isSame(
-  //         moment(endTime)
-  //       );
-  //       if (hasExistingShift) {
-  //         return {
-  //           success: false,
-  //           message: "Worker has a shift already",
-  //           data: {},
-  //         };
-  //       }
-  //     }
-  //   }
-  //   const assignShift = new workerShift({
-  //     workerId: id,
-  //     shiftId,
-  //     startTime,
-  //     endTime,
-  //   });
-
-  //   await assignShift.save();
-
-  //   return {
-  //     success: true,
-  //     message: "Shift assigned successful",
-  //     data: assignShift,
-  //   };
-  // }
   async assignShift(data) {
-    const { startTime, endTime, shiftId, id } = data;
+    const { startTime, endTime, shiftId, workerId } = data;
 
     const isValidTime = validateTime(startTime, endTime);
+
     if (!isValidTime) {
-      return isValidTime;
+      return;
     }
 
-    const timeTable = await Shift.findById(shiftId);
-    const validation = validateShiftWithTimeTable(
+    const timeTable = await Shift.findOne({ _id: shiftId });
+
+    const validation = validateShiftWithShiftTable(
       timeTable.startHour,
       timeTable.endHour,
       startTime,
       endTime
     );
-    if (validation.message) {
-      return { message: validation.message };
+
+    if (validation) {
+      return validation;
     }
 
-    const workersShift = await workerShift.find({ workerId: id });
+    //check that user those not have any shift for that day...
+    const workersShift = await workerShift.find({ where: { _id: workerId } });
     const hasExistingShift = workersShift.some((shift) =>
       moment(shift.endTime).isSame(moment(endTime))
     );
 
     if (hasExistingShift) {
       return {
-        message: "Worker has a shift already",
+        message: "Worker already has a shift at this time",
       };
     }
 
-    const assignShift = new workerShift({
-      workerId: id,
+    const newShift = new WorkerShift({
+      workerId,
       shiftId,
-      startTime: moment(startTime).format("HH:mm"),
-      endTime: moment(endTime).format("HH:mm"),
+      startTime: moment(startTime).format("YYYY-MM-DD HH:mm"),
+      endTime: moment(endTime).format("YYYY-MM-DD HH:mm"),
     });
 
-    await assignShift.save();
+    await newShift.save();
 
     return {
       message: "Shift assigned successfully",
-      assignShift,
+      newShift,
     };
   }
 
@@ -145,3 +94,50 @@ class WorkerShiftService {
 }
 
 module.exports = WorkerShiftService;
+
+// async assignShift(data) {
+//   const { startTime, endTime, shiftId, workerId } = data;
+
+//   const isValidTime = validateTime(startTime, endTime);
+
+//   if (!isValidTime) {
+//     return;
+//   }
+
+//   const timeTable = await Shift.findOne({ where: { _id: shiftId } });
+
+//   const validation = validateShiftWithTimeTable(
+//     timeTable.startHour,
+//     timeTable.endHour,
+//     startTime,
+//     endTime
+//   );
+//   if (validation) {
+//     return validation;
+//   }
+
+//   const workersShift = await workerShift.find({ workerId });
+//   const hasExistingShift = workersShift.some((shift) =>
+//     moment(shift.endTime).isSame(moment(endTime))
+//   );
+
+//   if (hasExistingShift) {
+//     return {
+//       message: "Worker has a shift already",
+//     };
+//   }
+
+//   const assignShift = new workerShift({
+//     workerId: id,
+//     shiftId,
+//     startTime: moment(startTime).format("HH:mm"),
+//     endTime: moment(endTime).format("HH:mm"),
+//   });
+
+//   await assignShift.save();
+
+//   return {
+//     message: "Shift assigned successfully",
+//     assignShift,
+//   };
+// }

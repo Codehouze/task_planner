@@ -1,15 +1,15 @@
 const { check } = require("express-validator");
 
 const validator = {
-  // Validator for Sign In
+  
   signInValidator: [
-    // Email must be specified
+    
     check("email")
       .normalizeEmail({ gmail_remove_dots: false })
       .isEmail()
       .withMessage("Email is required"),
 
-    // password must be at least 6 chars long
+    
     check("password")
       .isLength({ min: 6 })
       .withMessage(
@@ -18,7 +18,6 @@ const validator = {
   ],
   
   validateEmail: [
-    // Email must be specified
     check("email")
       .normalizeEmail({ gmail_remove_dots: false })
       .isEmail()

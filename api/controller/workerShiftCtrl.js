@@ -3,14 +3,15 @@ const WorkerShiftService = require("../services/workerShiftService");
 const workerShiftService = new WorkerShiftService();
 
 exports.createWorkShift = async (req, res) => {
-  const { id } = req.params;
+  const workerId = "6352d408991956211b7c0583";
   const { shiftId, startTime, endTime } = req.body;
-  const data = { shiftId, startTime, endTime };
+  const data = { shiftId, startTime, endTime, workerId };
   try {
     const assignTask = await workerShiftService.assignShift(data);
 
     return res.json(assignTask);
   } catch (err) {
+    console.log(err);
     return res
       .status(500)
       .json({ success: false, message: "Something went wrong" });

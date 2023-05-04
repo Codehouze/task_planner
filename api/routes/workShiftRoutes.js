@@ -7,7 +7,7 @@ const router = require("express").Router();
 router.post(
   "/",
   // validator.signUpValidator,
-  // validateRequest,
+  validateRequest,
   workerShiftCtrl.createWorkShift
 );
 
