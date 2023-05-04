@@ -1,8 +1,8 @@
 const moment = require("moment");
 
 exports.validateTime = (startTime, endTime) => {
-  const start = moment(startTime, "YYYY-MM-DD HH:mm", true);
-  const end = moment(endTime, "YYYY-MM-DD HH:mm", true);
+  const start = moment(startTime, "HH:mm", true);
+  const end = moment(endTime, "HH:mm", true);
 
   if (!start.isValid() || !end.isValid()) {
     return { message: "Invalid date or time format" };
@@ -10,30 +10,17 @@ exports.validateTime = (startTime, endTime) => {
 
   const duration = moment.duration(end.diff(start));
   const shiftDuration = duration.asHours();
+  if (start.isAfter(end)) {
+    return { message: "Start time must be before end time" };
+  }
 
   if (shiftDuration !== 8) {
     return {
       message: "Shift duration must be eight hours",
     };
   }
-
-  if (start.isAfter(end)) {
-    return { message: "Start time must be before end time" };
-  }
-
-  if (start < moment()) {
-    return { message: "Start time must be in the future" };
-  }
-
-  return { data: { startTime, endTime } };
+  return null;
 };
-
-// exports.validateShiftDuration = (startHour, endHour) => {
-//   const shiftDuration = parseInt(endHour) - parseInt(startHour);
-//   if (shiftDuration !== 8) {
-//     return { message: "A shift must be 8 hours long" };
-//   }
-// };
 
 exports.validateShiftWithShiftTable = (
   timeTableStart,
@@ -41,9 +28,22 @@ exports.validateShiftWithShiftTable = (
   start,
   end
 ) => {
-  if (timeTableStart !== start && timeTableEnd !== end) {
+  const startDateObj = moment(start, "YYYY-MM-DD HH:mm");
+  const endDateObj = moment(end, "YYYY-MM-DD HH:mm");
+
+  const startTime = startDateObj.format("HH:mm");
+  const endTime = endDateObj.format("HH:mm");
+
+  console.log("time table shift =====>", timeTableStart, timeTableEnd);
+
+  if (timeTableStart !== startTime && timeTableEnd !== endTime) {
     return {
-      message: "Please select a shift from the time table",
+      message: "Select the right shift from already created shift",
     };
   }
+
+  if (start < moment()) {
+    return { message: "Start time must be in the future" };
+  }
+  return null;
 };

@@ -7,11 +7,9 @@ exports.createWorker = async (req, res) => {
   const data = { name, email, gender, password };
   try {
     const createdWorker = await workerService.createWorker(data);
-    return res.json(createdWorker);
+    res.json(createdWorker);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ success: false, message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -23,9 +21,9 @@ exports.workerLogin = async (req, res) => {
     const data = { email, password };
     const loggedInWorker = await workerService.login(data);
 
-    return res.status(200).json(loggedInWorker);
+    res.status(200).json(loggedInWorker);
   } catch (err) {
-    return res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -36,9 +34,9 @@ exports.getOneWorker = async (req, res) => {
   try {
     const oneWorker = await workerService.getOneWorker(id);
 
-    return res.json(oneWorker);
+    res.json(oneWorker);
   } catch (err) {
-    return res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -46,10 +44,8 @@ exports.getAllWorkers = async (req, res) => {
   try {
     const getAllWorkers = await workerService.getAllWorkers();
 
-    return res.json(getAllWorkers);
+    res.json(getAllWorkers);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ success: false, message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };

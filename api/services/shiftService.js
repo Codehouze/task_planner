@@ -1,36 +1,36 @@
 const Shift = require("../model/shiftModel");
-const { validateShiftDuration } = require("../middleware/validateTime");
+const { validateTime } = require("../middleware/validateTime");
 
 class ShiftService {
   async createWorkShift(data) {
-    const { name, startHour, endHour } = data;
-    const shiftExist = this.getShift(name);
+    const { name, startTime, endTime } = data;
 
-    if (shiftExist) {
-      return shiftExist;
+    const existingShift = await Shift.findOne({ name });
+
+    if (existingShift) {
+      return { message: "Shift already exist" };
+    }
+    const shiftTimeValidation = validateTime(startTime, endTime);
+    if (shiftTimeValidation) {
+      return shiftTimeValidation;
     }
 
-    const isNotValidShiftDuration = validateShiftDuration(startHour, endHour);
-    if (isNotValidShiftDuration) {
-      return isNotValidShiftDuration;
-    }
-
-    const formData = new Shift({
+    const shift = new Shift({
       name,
-      startHour,
-      endHour,
+      startTime,
+      endTime,
     });
-    await formData.save();
+    const newShift = await shift.save();
 
     return {
-      success: true,
-      message: `Shift ${name} created successfully.`,
-      data: formData,
+      message: `${name} created successfully.`,
+      newShift,
     };
   }
 
   async getAllShift() {
     const shift = await Shift.find();
+
     if (!shift) {
       return { message: "Shift Not found" };
     }
@@ -44,14 +44,6 @@ class ShiftService {
       return { message: "Shift Not found" };
     }
     return shift;
-  }
-
-  async getShift(name) {
-    const existingShift = await Shift.findOne({ name });
-
-    if (existingShift) {
-      return { message: "Shift already exist" };
-    }
   }
 }
 module.exports = ShiftService;

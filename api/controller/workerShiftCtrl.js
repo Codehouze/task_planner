@@ -3,7 +3,7 @@ const WorkerShiftService = require("../services/workerShiftService");
 const workerShiftService = new WorkerShiftService();
 
 exports.createWorkShift = async (req, res) => {
-  const workerId = "6352d408991956211b7c0583";
+  const { workerId } = req.user;
   const { shiftId, startTime, endTime } = req.body;
   const data = { shiftId, startTime, endTime, workerId };
   try {

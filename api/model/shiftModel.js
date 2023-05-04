@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const ShiftModelSchema = new mongoose.Schema({
-  startHour: String,
-  endHour: String,
+  startTime: String,
+  endTime: String,
   name: String,
 });
 
-const ShiftModel = mongoose.model("ShiftModel", ShiftModelSchema);
+const Shift = mongoose.model("ShiftModel", ShiftModelSchema);
 
-module.exports = ShiftModel;
+module.exports = Shift;
