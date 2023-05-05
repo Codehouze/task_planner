@@ -4,9 +4,9 @@ const { getOneWorkShift } = require("./workerShiftCtrl");
 const shiftService = new ShiftService();
 
 exports.createShift = async (req, res) => {
-  const { name, startHour, endHour } = req.body;
+  const { name, startTime, endTime } = req.body;
   try {
-    const data = { name, startHour, endHour };
+    const data = { name, startTime, endTime };
     const createdShift = await shiftService.createWorkShift(data);
 
     return res.json(createdShift);
@@ -34,8 +34,8 @@ exports.getOneShift = async (req, res) => {
 exports.getAllShift = async (req, res) => {
   try {
     const getAllShift = await shiftService.getAllShift();
-
-    return res.json(getAllShift);
+    console.log(getAllShift);
+    res.json(getAllShift);
   } catch (err) {
     console.log(err);
     return res

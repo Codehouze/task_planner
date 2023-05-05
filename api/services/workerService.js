@@ -7,9 +7,9 @@ require("dotenv").config();
 class WorkerService {
   async createWorker(data) {
     const { name, email, gender, password } = data;
-    const user = await Worker.findOne({ email });
-    if (user) {
-      return { message: "Account already exist" };
+    const worker = await Worker.findOne({ email });
+    if (worker) {
+      return { message: "Worker Account already exist" };
     }
 
     const hashedPassword = await generateHashPassword(password);
@@ -50,9 +50,7 @@ class WorkerService {
     const worker = await Worker.findOne({ id });
     if (!worker) {
       return {
-        success: false,
         message: "Worker not found",
-        data: {},
       };
     }
     return { success: true, message: "successful", data: worker };
@@ -62,13 +60,11 @@ class WorkerService {
 
     if (!workers) {
       return {
-        success: false,
         message: "Workers not found",
-        data: {},
       };
     }
 
-    return { success: true, message: "successful", data: workers };
+    return { message: "successful", workers };
   }
 }
 module.exports = WorkerService;
