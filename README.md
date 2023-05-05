@@ -4,11 +4,12 @@ Work Planner is a web application that helps users plan and manage their work sc
 
 ## Features
 
-- Create new work shifts
-- Edit existing work shifts
-- Delete work shifts
+- Create new work shifts Time Table
+- Edit existing work shifts Time Table
+- Assign Shift
+- Unassign shift
 - View work schedule
-- Filter work schedule by date range
+
 
 ## Installation
 
