@@ -12,7 +12,7 @@ Work Planner is a web application that helps users plan and manage their work sc
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/work-planner.git`
+1. Clone the repository: `git clone git@github.com:Codehouze/task_planner.git`
 2. Install dependencies: `npm install`
 3. Start the server: `npm start`
 
