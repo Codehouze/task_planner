@@ -22,7 +22,3 @@ const WorkerShiftModel = mongoose.model(
 
 module.exports = WorkerShiftModel;
 
-// check worker shift history here and know whe to assign him to another
-// check if worker has any pending shift before
-
-// 0 - 8, 8 - 16, 16 - 24;

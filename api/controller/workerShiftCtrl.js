@@ -20,12 +20,9 @@ exports.createWorkShift = async (req, res) => {
 
 exports.getAllWorkShift = async (req, res) => {
   try {
-    const { data, message, success } =
-      await workerShiftService.getAllWorkerShift(req);
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.status(200).json({ success, message, data });
+    const { workerId } = req.user;
+    const Shifts = await workerShiftService.getAllWorkerShift(workerId);
+    res.status(200).json(Shifts);
   } catch (err) {
     console.log(err);
     return res
@@ -35,14 +32,11 @@ exports.getAllWorkShift = async (req, res) => {
 };
 
 exports.getOneWorkShift = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { data, message, success } = await workerShiftService.getOneWorkShift(
-      req
-    );
-    if (!success) {
-      return res.status(400).json({ success, message });
-    }
-    return res.json({ success, data, message });
+    const Shift = await workerShiftService.getOneWorkShift(id);
+
+    res.json(Shift);
   } catch (err) {
     return res
       .status(500)
