@@ -31,20 +31,23 @@ class WorkerShiftService {
       startTime,
       endTime
     );
-
+    console.log("this is the validation of the time",validation);
     if (validation) {
       return validation;
     }
 
-    const newShift = new WorkerShift({
+    const workerShift = new WorkerShift({
       workerId,
       shiftId,
       startTime: moment(startTime).format("YYYY-MM-DD HH:mm"),
       endTime: moment(endTime).format("YYYY-MM-DD HH:mm"),
     });
-
-    await newShift.save();
-
+    console.log(
+      "this is the work shift for the new worker===============+>",
+      workerShift
+    );
+    const newShift = await workerShift.create();
+    console.log("create a new shift for worker", newShift);
     return {
       message: "Shift assigned successfully",
       newShift,

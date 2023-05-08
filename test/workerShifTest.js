@@ -16,10 +16,10 @@ const { SECRET_KEY } = process.env;
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe("Work Planner  Unit testing", () => {
+describe("Work Planner Unit testing", () => {
   let workerId;
   let shiftId;
-  let newShift;
+
   beforeEach(() => {
     sinon.restore();
   });
@@ -33,6 +33,10 @@ describe("Work Planner  Unit testing", () => {
         (worker.gender = "male"),
         (worker.password = "password123");
       workerId = worker.id;
+      console.log(
+        "we are using this worker id for the work authentication",
+        workerId
+      );
       const email = worker.email;
       authToken = jwt.sign({ workerId, email }, SECRET_KEY);
       expect(authToken).to.be.a("string");
@@ -56,15 +60,15 @@ describe("Work Planner  Unit testing", () => {
         const shiftService = new ShiftService();
         const existingShift = {
           name: "morning",
-          startTime: "08:00",
-          endTime: "16:00",
+          startTime: "00:00",
+          endTime: "08:00",
         };
         shiftStub.resolves(existingShift);
 
         const result = await shiftService.createWorkShift({
           name: "morning",
-          startTime: "00:00",
-          endTime: "08:00",
+          startTime: "08:00",
+          endTime: "16:00",
         });
 
         expect(shiftStub.calledOnceWith({ name: "morning" })).to.be.true;
@@ -86,7 +90,7 @@ describe("Work Planner  Unit testing", () => {
 
       it("should create a new shift if it does not already exist and start time is less than end time", async () => {
         const shiftService = new ShiftService();
-        newShift = {
+        const newShift = {
           id: "64541d6d786c9a13ed6a9405",
           name: "afternoon",
           startTime: "08:00",
@@ -196,6 +200,11 @@ describe("Work Planner  Unit testing", () => {
           shiftId: shiftId,
           workerId: workerId,
         };
+        console.log(
+          "this is workerId from the worker shift endpoint",
+          workerId,
+          shiftId
+        );
         workerShiftFindStub.resolves([
           { startTime: "2023-05-10 16:00", endTime: "2023-05-10 24:00" },
         ]);
@@ -207,6 +216,12 @@ describe("Work Planner  Unit testing", () => {
       });
 
       it("should return an error message if shift is not valid", async () => {
+        const newShift = {
+          id: "64541d6d786c9a13ed6a9405",
+          name: "afternoon",
+          startTime: "08:00",
+          endTime: "16:00",
+        };
         const data = {
           startTime: "2023-05-10 08:00",
           endTime: "2023-05-10 16:00",
@@ -225,13 +240,14 @@ describe("Work Planner  Unit testing", () => {
         );
       });
 
-      it("should create a new worker shift and return a success message", async () => {
+      it.only("should create a new worker shift and return a success message", async () => {
         const data = {
           startTime: "2023-05-10 08:00",
           endTime: "2023-05-10 16:00",
-          shiftId: shiftId,
-          workerId: workerId,
+          shiftId: "64541d6d786c9a13ed6a9405",
+          workerId: "6453bc6bb2bcb094b89a3f04",
         };
+
         workerShiftFindStub.resolves([]);
         shiftFindOneStub.resolves({
           startTime: "2023-05-10 08:00",
@@ -239,8 +255,9 @@ describe("Work Planner  Unit testing", () => {
         });
         const workerShiftService = new WorkerShiftService();
         const result = await workerShiftService.assignShift(data);
+
         console.log(result);
-        // expect(result.message).to.equal("Shift assigned successfully");
+        expect(result.message).to.equal("Shift assigned successfully");
         expect(result.newShift.startTime).to.equal("2023-05-10 08:00");
         expect(result.newShift.endTime).to.equal("2023-05-10 16:00");
         expect(result.newShift.shiftId).to.equal(shiftId);
