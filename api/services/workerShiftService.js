@@ -7,11 +7,9 @@ class WorkerShiftService {
   async assignShift(data) {
     const { startTime, endTime, shiftId, workerId } = data;
 
-    const existingShifts = await WorkerShift.find({
-      workerId,
-    });
+    const existingShifts = await WorkerShift.find({ workerId });
 
-    const hasExistingShift = existingShifts.some((shift) => {
+    const hasExistingShift = existingShifts?.some((shift) => {
       const shiftStart = moment(shift.startTime).startOf("day");
       const shiftEnd = moment(shift.endTime).startOf("day");
       const newShiftStart = moment(startTime).startOf("day");
@@ -25,7 +23,7 @@ class WorkerShiftService {
 
     const timeTable = await Shift.findOne({ _id: shiftId });
 
-    const validation = validateShiftWithShiftTable(
+    const validation = await validateShiftWithShiftTable(
       timeTable.startTime,
       timeTable.endTime,
       startTime,
@@ -36,54 +34,47 @@ class WorkerShiftService {
       return validation;
     }
 
-    const newShift = new WorkerShift({
+    const workerShift = new WorkerShift({
       workerId,
       shiftId,
       startTime: moment(startTime).format("YYYY-MM-DD HH:mm"),
       endTime: moment(endTime).format("YYYY-MM-DD HH:mm"),
     });
 
-    await newShift.save();
-
+    const newShift = await workerShift.save();
+    console.log("create a new shift for worker", newShift);
     return {
       message: "Shift assigned successfully",
       newShift,
     };
   }
 
-  async getAllWorkerShift(req) {
-    const shifts = await WorkerShift.find();
+  async getAllWorkerShift(workerId) {
+    const shifts = await WorkerShift.find({ where: { workerId } });
 
     if (!shifts) {
       return {
-        success: false,
         message: "No Shift found",
-        data: {},
       };
     }
 
     return {
-      success: true,
       message: "Shifts returned",
-      data: shifts,
+      shifts,
     };
   }
 
-  async getOneWorkShift(req) {
-    const { id } = req.param;
-    const shift = await workerShift.findOne({ id });
+  async getOneWorkShift(id) {
+    const shift = await WorkerShift.findOne({ where: { _id: id } });
 
     if (!shift) {
       return {
-        success: false,
         message: "no shift found",
-        data: {},
       };
     }
     return {
-      success: true,
       message: "Shift Returned successful",
-      data: shift,
+      shift,
     };
   }
 }

@@ -1,5 +1,6 @@
 const moment = require("moment");
 
+let shiftStartTime, shiftEndTime;
 exports.validateTime = (startTime, endTime) => {
   const start = moment(startTime, "HH:mm", true);
   const end = moment(endTime, "HH:mm", true);
@@ -22,21 +23,29 @@ exports.validateTime = (startTime, endTime) => {
   return null;
 };
 
-exports.validateShiftWithShiftTable = (
+exports.validateShiftWithShiftTable = async (
   timeTableStart,
   timeTableEnd,
   start,
   end
 ) => {
+  const validate = validateTimeTableTime(timeTableStart, timeTableEnd);
   const startDateObj = moment(start, "YYYY-MM-DD HH:mm");
   const endDateObj = moment(end, "YYYY-MM-DD HH:mm");
 
   const startTime = startDateObj.format("HH:mm");
   const endTime = endDateObj.format("HH:mm");
 
-  console.log("time table shift =====>", timeTableStart, timeTableEnd);
+  console.log(
+    validate.shiftStartTime,
+    startTime,
+    validate.shiftEndTime !== endTime
+  );
 
-  if (timeTableStart !== startTime && timeTableEnd !== endTime) {
+  if (
+    validate.shiftStartTime !== startTime &&
+    validate.shiftEndTime !== endTime
+  ) {
     return {
       message: "Select the right shift from already created shift",
     };
@@ -45,5 +54,18 @@ exports.validateShiftWithShiftTable = (
   if (start < moment()) {
     return { message: "Start time must be in the future" };
   }
-  return null;
 };
+
+function validateTimeTableTime(timeTableStart, timeTableEnd) {
+  if (timeTableStart || timeTableEnd) {
+    const shiftStartTime = moment(timeTableStart, "YYYY-MM-DD HH:mm").format(
+      "HH:mm"
+    );
+    const shiftEndTime = moment(timeTableEnd, "YYYY-MM-DD HH:mm").format(
+      "HH:mm"
+    );
+    return { shiftStartTime, shiftEndTime };
+  }
+  (shiftStartTime = timeTableStart), (shiftEndTime = timeTableEnd);
+  return { shiftStartTime, shiftEndTime };
+}
