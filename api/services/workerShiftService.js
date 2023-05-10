@@ -7,11 +7,9 @@ class WorkerShiftService {
   async assignShift(data) {
     const { startTime, endTime, shiftId, workerId } = data;
 
-    const existingShifts = await WorkerShift.find({
-      workerId,
-    });
+    const existingShifts = await WorkerShift.find({ workerId });
 
-    const hasExistingShift = existingShifts.some((shift) => {
+    const hasExistingShift = existingShifts?.some((shift) => {
       const shiftStart = moment(shift.startTime).startOf("day");
       const shiftEnd = moment(shift.endTime).startOf("day");
       const newShiftStart = moment(startTime).startOf("day");
@@ -25,13 +23,13 @@ class WorkerShiftService {
 
     const timeTable = await Shift.findOne({ _id: shiftId });
 
-    const validation = validateShiftWithShiftTable(
+    const validation = await validateShiftWithShiftTable(
       timeTable.startTime,
       timeTable.endTime,
       startTime,
       endTime
     );
-    console.log("this is the validation of the time",validation);
+
     if (validation) {
       return validation;
     }
@@ -42,11 +40,8 @@ class WorkerShiftService {
       startTime: moment(startTime).format("YYYY-MM-DD HH:mm"),
       endTime: moment(endTime).format("YYYY-MM-DD HH:mm"),
     });
-    console.log(
-      "this is the work shift for the new worker===============+>",
-      workerShift
-    );
-    const newShift = await workerShift.create();
+
+    const newShift = await workerShift.save();
     console.log("create a new shift for worker", newShift);
     return {
       message: "Shift assigned successfully",

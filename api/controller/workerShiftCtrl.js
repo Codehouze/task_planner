@@ -1,4 +1,4 @@
-const WorkerShiftService = require("../services/workerShiftService");
+const WorkerShiftService = require("../services/workerShiftService").default;
 
 const workerShiftService = new WorkerShiftService();
 

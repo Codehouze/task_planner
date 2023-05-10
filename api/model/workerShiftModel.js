@@ -1,7 +1,7 @@
 //Require Mongoose
 const mongoose = require("mongoose");
 
-const WorkerShiftModelSchema = new mongoose.Schema({
+const WorkerShiftSchema = new mongoose.Schema({
   startTime: Date,
   endTime: Date,
   workerId: {
@@ -15,10 +15,6 @@ const WorkerShiftModelSchema = new mongoose.Schema({
   },
 });
 
-const WorkerShiftModel = mongoose.model(
-  "WorkerShiftModel",
-  WorkerShiftModelSchema
-);
+const WorkerShift = mongoose.model("WorkerShift", WorkerShiftSchema);
 
-module.exports = WorkerShiftModel;
-
+module.exports = WorkerShift;
