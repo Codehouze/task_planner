@@ -21,17 +21,16 @@ class WorkerShiftService {
       return { message: "Worker already has a shift on the same day" };
     }
 
-    const timeTable = await Shift.findOne({ _id: shiftId });
-
-    const validation = await validateShiftWithShiftTable(
+    const timeTable = await Shift.findOne({ _id: shiftId }); 
+    const validatedShift = await validateShiftWithShiftTable(
       timeTable.startTime,
       timeTable.endTime,
       startTime,
       endTime
     );
 
-    if (validation) {
-      return validation;
+    if (validatedShift) {
+      return validatedShift;
     }
 
     const workerShift = new WorkerShift({
@@ -42,7 +41,6 @@ class WorkerShiftService {
     });
 
     const newShift = await workerShift.save();
-    console.log("create a new shift for worker", newShift);
     return {
       message: "Shift assigned successfully",
       newShift,
