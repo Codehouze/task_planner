@@ -8,8 +8,8 @@ const router = require("express").Router();
 router.post(
   "/",
   isAuthenticated,
-  // validator.signUpValidator,
-  // validateRequest,
+  validator.shiftValidator,
+  validateRequest,
   shiftCtrl.createShift
 );
 

@@ -1,6 +1,5 @@
 const moment = require("moment");
 
-let shiftStartTime, shiftEndTime;
 exports.validateTime = (startTime, endTime) => {
   const start = moment(startTime, "HH:mm", true);
   const end = moment(endTime, "HH:mm", true);
@@ -29,22 +28,15 @@ exports.validateShiftWithShiftTable = async (
   start,
   end
 ) => {
-  const validate = validateTimeTableTime(timeTableStart, timeTableEnd);
-  const startDateObj = moment(start, "YYYY-MM-DD HH:mm");
-  const endDateObj = moment(end, "YYYY-MM-DD HH:mm");
-
-  const startTime = startDateObj.format("HH:mm");
-  const endTime = endDateObj.format("HH:mm");
-
-  console.log(
-    validate.shiftStartTime,
-    startTime,
-    validate.shiftEndTime !== endTime
+  const validTimeTableTimes = validateTimeInputFormat(
+    timeTableStart,
+    timeTableEnd
   );
+  const convertedTimeFormat = convertToTimeFormat(start, end);
 
   if (
-    validate.shiftStartTime !== startTime &&
-    validate.shiftEndTime !== endTime
+    validTimeTableTimes.timeTableStart !== convertedTimeFormat.startTime &&
+    validTimeTableTimes.timeTableEnd !== convertedTimeFormat.endTime
   ) {
     return {
       message: "Select the right shift from already created shift",
@@ -56,16 +48,18 @@ exports.validateShiftWithShiftTable = async (
   }
 };
 
-function validateTimeTableTime(timeTableStart, timeTableEnd) {
-  if (timeTableStart || timeTableEnd) {
-    const shiftStartTime = moment(timeTableStart, "YYYY-MM-DD HH:mm").format(
-      "HH:mm"
-    );
-    const shiftEndTime = moment(timeTableEnd, "YYYY-MM-DD HH:mm").format(
-      "HH:mm"
-    );
-    return { shiftStartTime, shiftEndTime };
-  }
-  (shiftStartTime = timeTableStart), (shiftEndTime = timeTableEnd);
-  return { shiftStartTime, shiftEndTime };
+function validateTimeInputFormat(timeTableStart, timeTableEnd) {
+  const convertedTimeFormat = convertToTimeFormat(timeTableStart, timeTableEnd);
+  timeTableStart = convertedTimeFormat.startTime;
+  timeTableEnd = convertedTimeFormat.endTime;
+  return { timeTableStart, timeTableEnd };
+}
+
+function convertToTimeFormat(start, end) {
+  const startDateObj = moment(start, "YYYY-MM-DD HH:mm");
+  const endDateObj = moment(end, "YYYY-MM-DD HH:mm");
+
+  const startTime = startDateObj.format("HH:mm");
+  const endTime = endDateObj.format("HH:mm");
+  return { startTime, endTime };
 }

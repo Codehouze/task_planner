@@ -1,4 +1,4 @@
-const WorkerShiftService = require("../services/workerShiftService").default;
+const WorkerShiftService = require("../services/workerShiftService");
 
 const workerShiftService = new WorkerShiftService();
 
@@ -21,8 +21,8 @@ exports.createWorkShift = async (req, res) => {
 exports.getAllWorkShift = async (req, res) => {
   try {
     const { workerId } = req.user;
-    const Shifts = await workerShiftService.getAllWorkerShift(workerId);
-    res.status(200).json(Shifts);
+    const getAllShift = await workerShiftService.getAllWorkerShift(workerId);
+    res.status(200).json(getAllShift);
   } catch (err) {
     console.log(err);
     return res
@@ -34,9 +34,9 @@ exports.getAllWorkShift = async (req, res) => {
 exports.getOneWorkShift = async (req, res) => {
   const { id } = req.params;
   try {
-    const Shift = await workerShiftService.getOneWorkShift(id);
+    const getOneShift = await workerShiftService.getOneWorkShift(id);
 
-    res.json(Shift);
+    return res.json(getOneShift);
   } catch (err) {
     return res
       .status(500)

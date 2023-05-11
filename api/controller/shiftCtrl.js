@@ -34,7 +34,6 @@ exports.getOneShift = async (req, res) => {
 exports.getAllShift = async (req, res) => {
   try {
     const getAllShift = await shiftService.getAllShift();
-    console.log(getAllShift);
     res.json(getAllShift);
   } catch (err) {
     console.log(err);
