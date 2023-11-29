@@ -8,7 +8,7 @@ class WorkerShiftService {
     try {
 
     const hasExistingShift = await WorkerShift.find({ workerId, scheduledDate });
-    console.log(hasExistingShift && hasExistingShift?.length > 0)
+   
     if (hasExistingShift && hasExistingShift?.length > 0) {
       return { message: "Worker already has a shift on the same day" };
     }
@@ -33,6 +33,7 @@ class WorkerShiftService {
  
 
   async getAllWorkerShift(workerId) {
+    try {
     const shifts = await WorkerShift.find({ where: { workerId } });
 
     if (!shifts) {
@@ -45,9 +46,14 @@ class WorkerShiftService {
       message: "Shifts returned",
       shifts,
     };
+  } catch (error) {
+    console.error("Error in Getting All WorkerShift:", error);
+    return { message: "Error getting all worker shift" };
+  }
   }
 
   async getOneWorkShift(id) {
+    try{
     const shift = await WorkerShift.findOne({ where: { _id: id } });
 
     if (!shift) {
@@ -59,6 +65,10 @@ class WorkerShiftService {
       message: "Shift Returned successful",
       shift,
     };
+  } catch (error) {
+    console.error("Error in Getting One Worker's Shift:", error);
+    return { message: "Error getting One worker's shift" };
+  }
   }
 }
 

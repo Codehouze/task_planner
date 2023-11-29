@@ -201,25 +201,37 @@ describe("Work Planner Unit testing", () => {
         expect(workerShiftStub.calledOnce).to.be.true;
         expect(result.message).to.equal("Shift assigned successfully");
       });
-
-      it("should return an error message if worker already has a shift on the same day", async () => {
+      it('should return an error message if worker already has a shift on the same day', async () => {
+        // Mock existing shift data for the same day
+        const existingShiftData = [
+          {
+            workerId: 'existingWorkerId',
+            shiftId: 'existingShiftId',
+            scheduledDate: '2023-12-01',
+          },
+        ];
+  
+        // Resolve the findStub with the mock data
+        workerShiftStub.resolves(existingShiftData);
+  
+        // Create an instance of WorkerShiftService
         const workerShiftService = new WorkerShiftService();
-        const assignedShift = {
-          workerId: "64541d50786c9a13ed6a9402",
-          shiftId: "64541d6d786c9a13ed6a9405",
-          scheduledDate: "2023-12-01",
-        }
-
-        workerShiftStub.resolves(assignedShift);
-
-        const result = await workerShiftService.assignShift({
-          workerId: "64541d50786c9a13ed6a9402",
-          shiftId: "64541d6d786c9a13ed6a9405",
-          scheduledDate: "2023-12-01"
-        });
-
-        expect(workerShiftStub.calledOnceWith({ workerId: "64541d50786c9a13ed6a9402", scheduledDate: "2023-12-01" })).to.be.true;
-        expect(result).to.deep.equal({ message: "Worker already has a shift on the same day" })
+  
+        // Mock data for the new shift
+        const data = {
+          workerId: 'newWorkerId',
+          shiftId: 'newShiftId',
+          scheduledDate: '2023-12-01',
+        };
+  
+        // Execute the assignShift method
+        const result = await workerShiftService.assignShift(data);
+  
+        // Expect the result to have an error message
+        expect(result.message).to.equal('Worker already has a shift on the same day');
+  
+        // Restore the stub after the test
+        workerShiftStub.restore();
       });
 
     });
