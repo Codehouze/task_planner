@@ -1,43 +1,23 @@
 const WorkerShift = require("../model/workerShiftModel");
-const moment = require("moment"); // require
 const Shift = require("../model/shiftModel");
-const { validateShiftWithShiftTable } = require("../middleware/validateTime");
+const { validateShiftWithShiftTable, convertToDateFormat } = require("../middleware/validateTime");
 
 class WorkerShiftService {
   async assignShift(data) {
-    const { startTime, endTime, shiftId, workerId } = data;
+    const { shiftId, workerId,scheduledDate } = data;
+    try {
 
-    const existingShifts = await WorkerShift.find({ workerId });
-
-    const hasExistingShift = existingShifts?.some((shift) => {
-      const shiftStart = moment(shift.startTime).startOf("day");
-      const shiftEnd = moment(shift.endTime).startOf("day");
-      const newShiftStart = moment(startTime).startOf("day");
-      const newShiftEnd = moment(endTime).startOf("day");
-      return shiftStart.isSame(newShiftStart) || shiftEnd.isSame(newShiftEnd);
-    });
-
-    if (hasExistingShift) {
+    const hasExistingShift = await WorkerShift.find({ workerId, scheduledDate });
+    console.log(hasExistingShift && hasExistingShift?.length > 0)
+    if (hasExistingShift && hasExistingShift?.length > 0) {
       return { message: "Worker already has a shift on the same day" };
     }
-
-    const timeTable = await Shift.findOne({ _id: shiftId }); 
-    const validatedShift = await validateShiftWithShiftTable(
-      timeTable.startTime,
-      timeTable.endTime,
-      startTime,
-      endTime
-    );
-
-    if (validatedShift) {
-      return validatedShift;
-    }
+  
 
     const workerShift = new WorkerShift({
-      workerId,
       shiftId,
-      startTime: moment(startTime).format("YYYY-MM-DD HH:mm"),
-      endTime: moment(endTime).format("YYYY-MM-DD HH:mm"),
+      workerId,
+      scheduledDate
     });
 
     const newShift = await workerShift.save();
@@ -45,7 +25,12 @@ class WorkerShiftService {
       message: "Shift assigned successfully",
       newShift,
     };
+  } catch (error) {
+    console.error("Error in assignShift:", error);
+    return { message: "Error assigning shift" };
   }
+}
+ 
 
   async getAllWorkerShift(workerId) {
     const shifts = await WorkerShift.find({ where: { workerId } });

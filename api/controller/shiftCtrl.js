@@ -23,8 +23,8 @@ exports.getOneShift = async (req, res) => {
   try {
     const getOneShift = await shiftService.getOneShift(id);
     return res.json(getOneShift);
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.error("Error in getOneShift:",error);
     return res
       .status(500)
       .json({ success: false, message: "Something went wrong" });

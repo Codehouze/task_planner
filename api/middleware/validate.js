@@ -48,11 +48,8 @@ const validator = {
   ],
   workShiftValidator: [
     check("shiftId").isString().notEmpty().withMessage("shiftId is required"),
-    check("startTime")
-      .isString()
-      .notEmpty()
-      .withMessage("startTime is required"),
-    check("endTime").isString().notEmpty().withMessage("endTime is required"),
+   
+    check("workerId").isString().notEmpty().withMessage("select a worker"),
   ],
 };
 module.exports = validator;

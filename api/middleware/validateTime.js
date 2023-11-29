@@ -4,10 +4,6 @@ exports.validateTime = (startTime, endTime) => {
   const start = moment(startTime, "HH:mm", true);
   const end = moment(endTime, "HH:mm", true);
 
-  if (!start.isValid() || !end.isValid()) {
-    return { message: "Invalid date or time format" };
-  }
-
   const duration = moment.duration(end.diff(start));
   const shiftDuration = duration.asHours();
   if (start.isAfter(end)) {
@@ -23,8 +19,6 @@ exports.validateTime = (startTime, endTime) => {
 };
 
 exports.validateShiftWithShiftTable = async (
-  timeTableStart,
-  timeTableEnd,
   start,
   end
 ) => {
@@ -55,11 +49,9 @@ function validateTimeInputFormat(timeTableStart, timeTableEnd) {
   return { timeTableStart, timeTableEnd };
 }
 
-function convertToTimeFormat(start, end) {
-  const startDateObj = moment(start, "YYYY-MM-DD HH:mm");
-  const endDateObj = moment(end, "YYYY-MM-DD HH:mm");
+exports.convertToDateFormat = (scheduledDate) =>{
+ // Parse the input string and format it to "YYYY-MM-DD"
+const formattedDate = moment(scheduledDate).format('YYYY-MM-DD');
 
-  const startTime = startDateObj.format("HH:mm");
-  const endTime = endDateObj.format("HH:mm");
-  return { startTime, endTime };
+  return formattedDate;
 }

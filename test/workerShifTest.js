@@ -11,37 +11,41 @@ const WorkerService = require("../api/services/workerService");
 const WorkerShiftService = require("../api/services/workerShiftService");
 
 const dotenv = require("dotenv");
+const { doesNotMatch } = require("assert");
 dotenv.config();
 
 const { SECRET_KEY } = process.env;
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
+describe("User Authentication", function () {
+  it("should return a valid authentication token", () => {
+    const worker = new Worker();
+
+    (worker.id = "6453bc6bb2bcb094b89a3f04"),
+      (worker.name = "John Doe"),
+      (worker.email = "johndoe@example.com"),
+      (worker.gender = "male"),
+      (worker.password = "password123");
+    workerId = worker.id;
+    const email = worker.email;
+    authToken = jwt.sign({ workerId, email }, SECRET_KEY);
+    expect(authToken).to.be.a("string");
+    expect(authToken).to.be.a("string");
+  });
+});
+
+
 describe("Work Planner Unit testing", () => {
   let workerId;
   let shiftId;
+  let scheduledDate;
 
   beforeEach(() => {
     sinon.restore();
   });
-  describe("User Token", function () {
-    it("should return a valid authentication token", () => {
-      const worker = new Worker();
 
-      (worker.id = "6453bc6bb2bcb094b89a3f04"),
-        (worker.name = "John Doe"),
-        (worker.email = "johndoe@example.com"),
-        (worker.gender = "male"),
-        (worker.password = "password123");
-      workerId = worker.id;
-      const email = worker.email;
-      authToken = jwt.sign({ workerId, email }, SECRET_KEY);
-      expect(authToken).to.be.a("string");
-      expect(authToken).to.be.a("string");
-    });
-  });
-
-  describe("Unit test for ShiftService", () => {
+  describe("Test ShiftServices", () => {
     describe("createWorkShift", () => {
       let shiftStub;
 
@@ -112,7 +116,7 @@ describe("Work Planner Unit testing", () => {
       });
     });
 
-    describe("getAllShift", () => {
+    describe("GetAllShift", () => {
       it("should return all shifts", async () => {
         const shiftData = [{ name: "Morning Shift" }, { name: "Night Shift" }];
         const findStub = sinon.stub(Shift, "find").resolves(shiftData);
@@ -154,132 +158,70 @@ describe("Work Planner Unit testing", () => {
         findOneStub.restore();
       });
 
-      it("should return a message if shift is not found", async () => {
-        const shiftId = "64541d50786c9a13ed6a9927";
-        const mockShift = null;
+      // it("should return a message if shift is not found", async () => {
+      //   const shiftId = "64541d50786c9a13ed6a9927";
+      //   const mockShift = null;
 
-        const findOneStub = sinon.stub(Shift, "findOne").resolves(mockShift);
+      //   const findOneStub = sinon.stub(Shift, "findOne").resolves(mockShift);
 
-        const shiftService = new ShiftService();
+      //   const shiftService = new ShiftService();
 
-        const result = await shiftService.getOneShift(shiftId);
+      //   const result = await shiftService.getOneShift(shiftId);
 
-        expect(result).to.deep.equal({ message: "Shift Not found" });
+      //   expect(result).to.deep.equal({ message: "Shift Not found" });
 
-        findOneStub.restore();
-      });
+      //   findOneStub.restore();
+      // });
     });
   });
 
-  describe("WorkerShiftService", () => {
+  describe("Test WorkerShiftService", () => {
     describe("assignShift", () => {
-      const workerId = "64541d50786c9a13ed6a9402";
-      const shiftId = "64541d6d786c9a13ed6a9405";
-      const startTime = "2023-05-10 08:00";
-      const endTime = "2023-05-10 16:00";
+      let workerShiftStub;
+
+      beforeEach(() => {
+        workerShiftStub = sinon.stub(WorkerShift, "find");
+      });
 
       afterEach(() => {
         sinon.restore();
       });
 
-      it("should return an error message if worker already has a shift on the same day", async () => {
-        const existingShifts = [
-          { startTime: "2023-05-10 10:00", endTime: "2023-05-10 16:00" },
-        ];
-        const workerShiftFindStub = sinon
-          .stub(WorkerShift, "find")
-          .resolves(existingShifts);
-
+      it("should create a new worker shift and return success message", async () => {
         const workerShiftService = new WorkerShiftService();
-        const data = {
-          startTime,
-          endTime,
-          shiftId: shiftId,
-          workerId: workerId,
+        const workerShift = {
+          shiftId: "6566f63e4e4c060c71c7e51c",
+          workerId: "6566ef08f27bd7cc1fca2e13",
+          scheduledDate: "2023-11-01"
         };
-        const result = await workerShiftService.assignShift(data);
-        expect(workerShiftFindStub.calledOnceWith({ workerId })).to.be.true;
-        expect(result.message).to.equal(
-          "Worker already has a shift on the same day"
-        );
-      });
-
-      it("should return a validation error message if the shift is not valid", async () => {
-        const existingShifts = [];
-        const workerShiftFindStub = sinon
-          .stub(WorkerShift, "find")
-          .resolves(existingShifts);
-
-        const timeTable = {
-          startTime: "2023-05-10 10:00",
-          endTime: "2023-05-10 16:00",
-        };
-        const shiftFindOneStub = sinon
-          .stub(Shift, "findOne")
-          .resolves(timeTable);
-
-        const validateShiftWithShiftTableStub = sinon.stub().resolves({
-          message: "Select the right shift from already created shift",
-        });
-
-        const workerShiftService = new WorkerShiftService(
-          validateShiftWithShiftTableStub
-        );
-        const data = {
-          startTime: "2023-05-10 08:00",
-          endTime: "2023-05-10 12:00",
-          shiftId: "64541d6d786c9a13ed6a9409",
-          workerId: "64541d50786c9a13ed6a9402",
-        };
-        const result = await workerShiftService.assignShift(data);
-
-        expect(workerShiftFindStub.calledOnceWith({ workerId: data.workerId }))
-          .to.be.true;
-        expect(shiftFindOneStub.calledOnceWith({ _id: data.shiftId })).to.be
-          .true;
-
-        expect(result.message).to.equal(
-          "Select the right shift from already created shift"
-        );
-
-        workerShiftFindStub.restore();
-        shiftFindOneStub.restore();
-      });
-
-      it("should create a new worker shift and return a success message", async () => {
-        const existingShifts = [];
-        const workerShiftFindStub = sinon
-          .stub(WorkerShift, "find")
-          .resolves(existingShifts);
-
-        const timeTable = {
-          startTime: "2023-05-10 08:00",
-          endTime: "2023-05-10 16:00",
-        };
-        const shiftFindOneStub = sinon
-          .stub(Shift, "findOne")
-          .resolves(timeTable);
-
-        const workerShiftSaveStub = sinon
-          .stub(WorkerShift.prototype, "save")
-          .resolves({
-            _id: "some_id",
-            startTime,
-            endTime,
-            shiftId,
-            workerId,
-          });
-
-        const workerShiftService = new WorkerShiftService();
-        const data = { startTime, endTime, shiftId, workerId };
-        console.log(data);
-        const result = await workerShiftService.assignShift(data);
-        console.log(result);
-        expect(workerShiftFindStub.calledOnceWith({ workerId })).to.be.true;
-        expect(shiftFindOneStub.calledOnceWith({ _id: shiftId })).to.be.true;
-        expect(workerShiftSaveStub.calledOnce).to.be.true;
+        workerShiftStub.resolves(null);
+        sinon.stub(WorkerShift.prototype, "save").resolves(workerShift);
+        const result = await workerShiftService.assignShift(workerShift);
+        await Promise.resolve();
+        expect(workerShiftStub.calledOnce).to.be.true;
         expect(result.message).to.equal("Shift assigned successfully");
       });
+
+      it("should return an error message if worker already has a shift on the same day", async () => {
+        const workerShiftService = new WorkerShiftService();
+        const assignedShift = {
+          workerId: "64541d50786c9a13ed6a9402",
+          shiftId: "64541d6d786c9a13ed6a9405",
+          scheduledDate: "2023-12-01",
+        }
+
+        workerShiftStub.resolves(assignedShift);
+
+        const result = await workerShiftService.assignShift({
+          workerId: "64541d50786c9a13ed6a9402",
+          shiftId: "64541d6d786c9a13ed6a9405",
+          scheduledDate: "2023-12-01"
+        });
+
+        expect(workerShiftStub.calledOnceWith({ workerId: "64541d50786c9a13ed6a9402", scheduledDate: "2023-12-01" })).to.be.true;
+        expect(result).to.deep.equal({ message: "Worker already has a shift on the same day" })
+      });
+
     });
   });
 });

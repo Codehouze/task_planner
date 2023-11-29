@@ -39,7 +39,8 @@ class ShiftService {
   }
 
   async getOneShift(id) {
-    const shift = await Shift.findOne({ id });
+
+    const shift = await Shift.findOne({ _id: id});
     if (!shift) {
       return { message: "Shift Not found" };
     }

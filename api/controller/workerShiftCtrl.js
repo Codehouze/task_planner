@@ -3,12 +3,10 @@ const WorkerShiftService = require("../services/workerShiftService");
 const workerShiftService = new WorkerShiftService();
 
 exports.createWorkShift = async (req, res) => {
-  const { workerId } = req.user;
-  const { shiftId, startTime, endTime } = req.body;
-  const data = { shiftId, startTime, endTime, workerId };
+  const { workerId,shiftId,scheduledDate} = req.body;
+  const data = { shiftId,workerId,scheduledDate };
   try {
     const assignTask = await workerShiftService.assignShift(data);
-
     return res.json(assignTask);
   } catch (err) {
     console.log(err);

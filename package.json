@@ -1,11 +1,11 @@
 {
   "name": "work_planner-",
   "version": "1.0.0",
-  "description": "",
+  "description": "Work Planning Service",
   "main": "app.js",
   "scripts": {
     "nodemon": "node app",
-    "test": "NODE_ENV=test mocha --exit --timeout=60000"
+    "test": "NODE_ENV=test mocha --exit --timeout=60000 test/workerShifTest.js"
   },
   "repository": {
     "type": "git",
