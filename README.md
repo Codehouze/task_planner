@@ -19,7 +19,7 @@ Work Planner is a web application that helps users plan and manage their work sc
 ```
 # Postman Documentation
 ```bash
- https://documenter.getpostman.com/view/9821502/2s9YeK3pQP.
+ https://documenter.getpostman.com/view/9821502/2s9YeK3pQP
 ```
 
 ## Credits
