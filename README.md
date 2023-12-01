@@ -11,12 +11,16 @@ Work Planner is a web application that helps users plan and manage their work sc
 - View work schedule
 
 
-## Installation
-
+## Setup
+```bash
 1. Clone the repository: `git clone https://github.com/Codehouze/task_planner.git`
 2. Install dependencies: `npm install`
-3. Start the server: `npm start`
-
+3. Start the server: `nodemon`
+```
+# Postman Documentation
+```bash
+ https://documenter.getpostman.com/view/9821502/2s9YeK3pQP.
+```
 
 ## Credits
 
