@@ -25,3 +25,5 @@ Work Planner is a web application that helps users plan and manage their work sc
 ## Credits
 
 Work Planner was created by Codehouze.
+
+learn CD with this: https://www.youtube.com/watch?v=NOrNIzfx8Oo&t=67s
